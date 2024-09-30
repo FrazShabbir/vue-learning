@@ -1,25 +1,31 @@
-<script>
-export default {
-  data() {
-    return {
-      name: "Fraz Shabbir",
-      status: "active",
-      tasks: ["Task 1", "Task 2", "Task 3"],
-      link: "https://www.google.com",
-    };
-  },
-  methods: {
-    toggleStatus() {
-      if (this.status === "active") {
-        this.status = "pending";
-      } else if (this.status === "pending") {
-        this.status = "inactive";
-      } else {
-        this.status = "active";
-      }
-    },
-  },
+<script setup>
+import { ref } from "vue";
+
+const name = ref("Fraz Shabbir");
+const status = ref("active");
+const tasks = ref(["Task 1", "Task 2", "Task 3"]);
+const newTask = ref("");
+
+const toggleStatus = () => {
+  if (status.value === "active") {
+    status.value = "pending";
+  } else if (status.value === "pending") {
+    status.value = "inactive";
+  } else {
+    status.value = "active";
+  }
 };
+
+const addTask = () =>{
+  if(newTask.value!==""){
+    tasks.value.push(newTask.value);
+    newTask.value = "";
+  }
+};
+
+const deleteTask = (index) => {
+  tasks.value.splice(index, 1);
+};  
 </script>
 <template>
   <div>
@@ -32,11 +38,16 @@ export default {
   <div>
     <h3>Tasks</h3>
     <ul>
-      <li v-for="task in tasks" :key="task">{{ task }}</li>
+      <li v-for="(task, index) in tasks" :key="task"><span>{{ task }}</span> <button @click="deleteTask(index)">x</button> </li>
     </ul>
   </div>
 
-  <a v-bind:href="link">Google</a>
+  <form @submit.prevent="addTask">
+    <label for="">Name</label>
+    <input type="text" v-model="newTask" id="newTask" name="newTask" />
+    <button type="submit">Add Task</button>
+  </form>
+
   <button v-on:click="toggleStatus()">Change Status</button>
   <button @click="toggleStatus()">Change Status</button>
 </template>
